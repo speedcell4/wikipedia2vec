@@ -58,17 +58,17 @@ class Entity(Item):
 
 class Dictionary:
     def __init__(
-        self,
-        word_dict: Trie,
-        entity_dict: Trie,
-        redirect_dict: RecordTrie,
-        word_stats: np.ndarray,
-        entity_stats: np.ndarray,
-        language: Optional[str] = None,
-        lowercase: Optional[bool] = None,
-        build_params: Optional[dict] = None,
-        min_paragraph_len: int = 0,
-        uuid: str = "",
+            self,
+            word_dict: Trie,
+            entity_dict: Trie,
+            redirect_dict: RecordTrie,
+            word_stats: np.ndarray,
+            entity_stats: np.ndarray,
+            language: Optional[str] = None,
+            lowercase: Optional[bool] = None,
+            build_params: Optional[dict] = None,
+            min_paragraph_len: int = 0,
+            uuid: str = "",
     ):
         self._word_dict = word_dict
         self._entity_dict = entity_dict
@@ -164,17 +164,17 @@ class Dictionary:
 
     @staticmethod
     def build(
-        dump_db: DumpDB,
-        tokenizer: BaseTokenizer,
-        lowercase: bool,
-        min_word_count: int,
-        min_entity_count: int,
-        min_paragraph_len: int,
-        category: bool,
-        disambi: bool,
-        pool_size: int,
-        chunk_size: int,
-        progressbar: bool = True,
+            dump_db: DumpDB,
+            tokenizer: BaseTokenizer,
+            lowercase: bool,
+            min_word_count: int,
+            min_entity_count: int,
+            min_paragraph_len: int,
+            category: bool,
+            disambi: bool,
+            pool_size: int,
+            chunk_size: int,
+            progressbar: bool = True,
     ) -> "Dictionary":
         start_time = time.time()
 

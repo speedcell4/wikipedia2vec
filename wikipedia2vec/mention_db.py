@@ -23,15 +23,15 @@ logger = logging.getLogger(__name__)
 @cython.cclass
 class Mention:
     def __init__(
-        self,
-        dictionary: Dictionary,
-        text: str,
-        index: int,
-        link_count: int,
-        total_link_count: int,
-        doc_count: int,
-        start: int = -1,
-        end: int = -1,
+            self,
+            dictionary: Dictionary,
+            text: str,
+            index: int,
+            link_count: int,
+            total_link_count: int,
+            doc_count: int,
+            start: int = -1,
+            end: int = -1,
     ):
         self.text = text
         self.index = index
@@ -71,14 +71,14 @@ class Mention:
 
 class MentionDB:
     def __init__(
-        self,
-        mention_trie: Trie,
-        data_trie: RecordTrie,
-        dictionary: Dictionary,
-        case_sensitive: bool,
-        max_mention_len: int,
-        build_params: dict,
-        uuid: str,
+            self,
+            mention_trie: Trie,
+            data_trie: RecordTrie,
+            dictionary: Dictionary,
+            case_sensitive: bool,
+            max_mention_len: int,
+            build_params: dict,
+            uuid: str,
     ):
         self.mention_trie = mention_trie
         self.data_trie = data_trie
@@ -104,7 +104,7 @@ class MentionDB:
         if not self._case_sensitive:
             text = text.lower()
 
-        ret = self.mention_trie.prefixes(text[start : start + self._max_mention_len])
+        ret = self.mention_trie.prefixes(text[start: start + self._max_mention_len])
         ret.sort(key=len, reverse=True)
         return ret
 
@@ -141,16 +141,16 @@ class MentionDB:
 
     @staticmethod
     def build(
-        dump_db: DumpDB,
-        dictionary: Dictionary,
-        tokenizer: BaseTokenizer,
-        min_link_prob: float,
-        min_prior_prob: float,
-        max_mention_len: int,
-        case_sensitive: bool,
-        pool_size: int,
-        chunk_size: int,
-        progressbar: bool = True,
+            dump_db: DumpDB,
+            dictionary: Dictionary,
+            tokenizer: BaseTokenizer,
+            min_link_prob: float,
+            min_prior_prob: float,
+            max_mention_len: int,
+            case_sensitive: bool,
+            pool_size: int,
+            chunk_size: int,
+            progressbar: bool = True,
     ) -> "MentionDB":
         start_time = time.time()
 
@@ -296,7 +296,7 @@ def _count_occurrences(title: str, max_mention_len: int, case_sensitive: bool) -
 
         for token in tokens:
             start = token.start
-            for prefix in _name_trie.prefixes(text[start : start + max_mention_len]):
+            for prefix in _name_trie.prefixes(text[start: start + max_mention_len]):
                 if (start + len(prefix)) in end_offsets:
                     ret.append(prefix)
 

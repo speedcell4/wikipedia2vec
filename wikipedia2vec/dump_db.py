@@ -150,13 +150,13 @@ class DumpDB:
 
     @staticmethod
     def build(
-        dump_reader: WikiDumpReader,
-        out_file: str,
-        pool_size: int,
-        chunk_size: int,
-        preprocess_func: Optional[Callable[[str], str]] = None,
-        init_map_size: int = 500000000,
-        buffer_size: int = 3000,
+            dump_reader: WikiDumpReader,
+            out_file: str,
+            pool_size: int,
+            chunk_size: int,
+            preprocess_func: Optional[Callable[[str], str]] = None,
+            init_map_size: int = 500000000,
+            buffer_size: int = 3000,
     ):
         with closing(lmdb.open(out_file, subdir=False, map_async=True, map_size=init_map_size, max_dbs=3)) as env:
             map_size = [init_map_size]

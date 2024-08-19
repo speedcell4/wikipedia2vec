@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 class LinkGraph:
     def __init__(
-        self, dictionary: Dictionary, indices: np.ndarray, indptr: np.ndarray, build_params: dict, uuid: str = ""
+            self, dictionary: Dictionary, indices: np.ndarray, indptr: np.ndarray, build_params: dict, uuid: str = ""
     ):
         self.uuid = uuid
         self.build_params = build_params
@@ -36,7 +36,7 @@ class LinkGraph:
 
     def neighbor_indices(self, index: int) -> np.ndarray:
         index -= self._offset
-        return self._indices[self._indptr[index] : self._indptr[index + 1]]
+        return self._indices[self._indptr[index]: self._indptr[index + 1]]
 
     def serialize(self, shared_array: bool = False) -> dict:
         if shared_array:
@@ -75,14 +75,14 @@ class LinkGraph:
 
     @staticmethod
     def build(
-        dump_db: DumpDB, dictionary: Dictionary, pool_size: int, chunk_size: int, progressbar: bool = True
+            dump_db: DumpDB, dictionary: Dictionary, pool_size: int, chunk_size: int, progressbar: bool = True
     ) -> "LinkGraph":
         start_time = time.time()
 
         logger.info("Step 1/2: Processing Wikipedia pages...")
 
         with closing(
-            Pool(pool_size, initializer=_init_worker, initargs=(dump_db, dictionary.serialize(shared_array=True)))
+                Pool(pool_size, initializer=_init_worker, initargs=(dump_db, dictionary.serialize(shared_array=True)))
         ) as pool:
             rows = []
             cols = []

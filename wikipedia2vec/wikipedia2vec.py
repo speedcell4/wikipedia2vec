@@ -15,10 +15,15 @@ from typing import Any, Iterable, List, NamedTuple, Optional, Tuple
 import cython
 import joblib
 import numpy as np
-from marisa_trie import RecordTrie, Trie
-from tqdm import tqdm
 from cython.cimports.libcpp.random import mt19937
 from cython.cimports.scipy.linalg.cython_blas import saxpy, sdot
+from cython.cimports.wikipedia2vec.dictionary import Item, Word
+from cython.cimports.wikipedia2vec.dump_db import Paragraph, WikiLink
+from cython.cimports.wikipedia2vec.mention_db import Mention
+from cython.cimports.wikipedia2vec.utils.sentence_detector.sentence import Sentence
+from cython.cimports.wikipedia2vec.utils.tokenizer.token import Token
+from marisa_trie import RecordTrie, Trie
+from tqdm import tqdm
 
 from .dictionary import Dictionary
 from .dump_db import DumpDB
@@ -26,11 +31,6 @@ from .link_graph import LinkGraph
 from .mention_db import MentionDB
 from .utils.sentence_detector.base_sentence_detector import BaseSentenceDetector
 from .utils.tokenizer.base_tokenizer import BaseTokenizer
-from cython.cimports.wikipedia2vec.dictionary import Item, Word
-from cython.cimports.wikipedia2vec.dump_db import Paragraph, WikiLink
-from cython.cimports.wikipedia2vec.mention_db import Mention
-from cython.cimports.wikipedia2vec.utils.sentence_detector.sentence import Sentence
-from cython.cimports.wikipedia2vec.utils.tokenizer.token import Token
 
 MAX_EXP = cython.declare(cython.float, 6.0)
 EXP_TABLE_SIZE = cython.declare(cython.int, 1000)
@@ -98,7 +98,7 @@ class Wikipedia2Vec:
         return self.syn0[item.index]
 
     def most_similar(
-        self, item: Item, count: int = 100, min_count: Optional[int] = None
+            self, item: Item, count: int = 100, min_count: Optional[int] = None
     ) -> List[ItemWithScore[Item, float]]:
         if self.syn0 is None:
             raise RuntimeError("The model is not trained yet")
@@ -107,7 +107,7 @@ class Wikipedia2Vec:
         return self.most_similar_by_vector(vec, count, min_count=min_count)
 
     def most_similar_by_vector(
-        self, vec: np.ndarray, count: int = 100, min_count: Optional[int] = None
+            self, vec: np.ndarray, count: int = 100, min_count: Optional[int] = None
     ) -> List[ItemWithScore[Item, float]]:
         if self.syn0 is None:
             raise RuntimeError("The model is not trained yet")
@@ -226,25 +226,25 @@ class Wikipedia2Vec:
         return ret
 
     def train(
-        self,
-        dump_db: DumpDB,
-        link_graph: LinkGraph,
-        mention_db: MentionDB,
-        tokenizer: BaseTokenizer,
-        sentence_detector: Optional[BaseSentenceDetector],
-        dim_size: int,
-        init_alpha: float,
-        min_alpha: float,
-        window: int,
-        negative: int,
-        word_neg_power: float,
-        entity_neg_power: float,
-        sample: float,
-        iteration: int,
-        entities_per_page: int,
-        pool_size: int,
-        chunk_size: int,
-        progressbar: bool = True,
+            self,
+            dump_db: DumpDB,
+            link_graph: LinkGraph,
+            mention_db: MentionDB,
+            tokenizer: BaseTokenizer,
+            sentence_detector: Optional[BaseSentenceDetector],
+            dim_size: int,
+            init_alpha: float,
+            min_alpha: float,
+            window: int,
+            negative: int,
+            word_neg_power: float,
+            entity_neg_power: float,
+            sample: float,
+            iteration: int,
+            entities_per_page: int,
+            pool_size: int,
+            chunk_size: int,
+            progressbar: bool = True,
     ):
         start_time = time.time()
 
@@ -307,7 +307,8 @@ class Wikipedia2Vec:
             titles = list(dump_db.titles())
             for i in range(iteration):
                 with tqdm(
-                    total=len(titles), mininterval=0.5, disable=not progressbar, desc=f"Iteration {i+1}/{iteration}"
+                        total=len(titles), mininterval=0.5, disable=not progressbar,
+                        desc=f"Iteration {i + 1}/{iteration}"
                 ) as bar:
                     for _ in pool.imap_unordered(func, args_generator(titles, i), chunksize=chunk_size):
                         bar.update(1)
@@ -384,7 +385,7 @@ class Wikipedia2Vec:
     def _build_unigram_neg_table(items: Iterable[Item], power: float, table_size: int = 100000000) -> np.ndarray:
         items = list(items)
         neg_table = np.zeros(table_size, dtype=np.int32)
-        items_pow = float(sum([item.count**power for item in items]))
+        items_pow = float(sum([item.count ** power for item in items]))
 
         index = 0
         cur = items[index].count ** power / items_pow
@@ -443,19 +444,19 @@ _rng = cython.declare(mt19937)
 
 
 def _init_worker(
-    dump_db: DumpDB,
-    dictionary_obj: dict,
-    link_graph_obj: Optional[dict],
-    mention_db_obj: Optional[dict],
-    tokenizer: BaseTokenizer,
-    sentence_detector: Optional[BaseSentenceDetector],
-    syn0_obj: SharedArrayObject,
-    syn1_obj: SharedArrayObject,
-    word_neg_table: SharedArrayObject,
-    entity_neg_table: SharedArrayObject,
-    exp_table: SharedArrayObject,
-    word_sampling_table: SharedArrayObject,
-    link_indices: Optional[SharedArrayObject],
+        dump_db: DumpDB,
+        dictionary_obj: dict,
+        link_graph_obj: Optional[dict],
+        mention_db_obj: Optional[dict],
+        tokenizer: BaseTokenizer,
+        sentence_detector: Optional[BaseSentenceDetector],
+        syn0_obj: SharedArrayObject,
+        syn1_obj: SharedArrayObject,
+        word_neg_table: SharedArrayObject,
+        entity_neg_table: SharedArrayObject,
+        exp_table: SharedArrayObject,
+        word_sampling_table: SharedArrayObject,
+        link_indices: Optional[SharedArrayObject],
 ):
     global _dump_db, _dictionary, _link_graph, _mention_db, _tokenizer, _sentence_detector, _syn0, _syn1
     global _word_neg_table, _entity_neg_table, _exp_table, _word_sampling_table, _link_indices, _work, _rng
@@ -478,7 +479,7 @@ def _init_worker(
     _work = np.zeros(_syn0.shape[1], dtype=np.float32)
 
     np.random.seed()
-    _rng = mt19937(np.random.randint(2**31))
+    _rng = mt19937(np.random.randint(2 ** 31))
 
     if link_graph_obj is None:
         _link_graph = None
@@ -534,11 +535,11 @@ def _init_worker(
     neighbor_entity_indices=cython.int[:],
 )
 def _train_page(
-    arg: Tuple[int, str, float],
-    dim_size: cython.int,
-    window: cython.int,
-    negative: cython.int,
-    entities_per_page: cython.int,
+        arg: Tuple[int, str, float],
+        dim_size: cython.int,
+        window: cython.int,
+        negative: cython.int,
+        entities_per_page: cython.int,
 ):
     n, title, alpha = arg
 
@@ -582,7 +583,7 @@ def _train_page(
             sent_char_positions[:] = 0
 
             for i, sentence in enumerate(_sentence_detector.detect_sentences(text)):
-                sent_char_positions[sentence.start : sentence.end] = i
+                sent_char_positions[sentence.start: sentence.end] = i
 
         j = 0
         for i, token in enumerate(tokens):
@@ -595,7 +596,7 @@ def _train_page(
                 sent_token_positions[i] = sent_char_positions[token.start]
 
             if i > 0:
-                word_char_positions[j : token.start] = i - 1
+                word_char_positions[j: token.start] = i - 1
                 j = token.start
         word_char_positions[j:] = token_len - 1
 
@@ -637,11 +638,11 @@ def _train_page(
                 continue
 
             target_links.append((entity_index, wiki_link.start, wiki_link.end))
-            link_char_flags[wiki_link.start : wiki_link.end] = 1
+            link_char_flags[wiki_link.start: wiki_link.end] = 1
 
         if _mention_db is not None:
             for mention in _mention_db.detect_mentions(text, tokens, entity_indices_in_page):
-                if link_char_flags[mention.start : mention.end].sum() == 0:
+                if link_char_flags[mention.start: mention.end].sum() == 0:
                     target_links.append((mention.index, mention.start, mention.end))
 
         for entity_index, entity_start, entity_end in target_links:
@@ -688,12 +689,12 @@ def _train_page(
     onef=cython.float,
 )
 def _train_pair(
-    index1: cython.int,
-    index2: cython.int,
-    alpha: cython.float,
-    dim_size: cython.int,
-    negative: cython.int,
-    neg_table: cython.int[:],
+        index1: cython.int,
+        index2: cython.int,
+        alpha: cython.float,
+        dim_size: cython.int,
+        negative: cython.int,
+        neg_table: cython.int[:],
 ):
     one = 1
     onef = 1.0

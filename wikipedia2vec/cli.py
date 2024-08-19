@@ -6,14 +6,14 @@ from typing import Optional
 
 import click
 
-from .dump_db import DumpDB
 from .dictionary import Dictionary
+from .dump_db import DumpDB
 from .link_graph import LinkGraph
 from .mention_db import MentionDB
-from .wikipedia2vec import Wikipedia2Vec
-from .utils.wiki_dump_reader import WikiDumpReader
-from .utils.tokenizer import get_tokenizer, get_default_tokenizer
 from .utils.sentence_detector import get_sentence_detector
+from .utils.tokenizer import get_default_tokenizer, get_tokenizer
+from .utils.wiki_dump_reader import WikiDumpReader
+from .wikipedia2vec import Wikipedia2Vec
 
 logger = logging.getLogger(__name__)
 
@@ -296,14 +296,14 @@ def build_mention_db(dump_db_file: str, dictionary_file: str, out_file: str, tok
 @train_embedding_options
 @common_options
 def train_embedding(
-    dump_db_file: str,
-    dictionary_file: str,
-    link_graph: Optional[str],
-    mention_db: Optional[str],
-    tokenizer: Optional[str],
-    sent_detect: Optional[str],
-    out_file: str,
-    **kwargs
+        dump_db_file: str,
+        dictionary_file: str,
+        link_graph: Optional[str],
+        mention_db: Optional[str],
+        tokenizer: Optional[str],
+        sent_detect: Optional[str],
+        out_file: str,
+        **kwargs
 ):
     dump_db = DumpDB(dump_db_file)
     dictionary = Dictionary.load(dictionary_file)
